@@ -9,7 +9,7 @@ app.config.from_object('config.LocalConfig')
 db = SQLAlchemy(app)
 # have to import since models relies on db object
 from models import Cities, Users
-from forms import RegisterForm
+from forms import RegisterForm, ContactForm
                     
 
 # custom decorator to verify user is logged in
@@ -89,6 +89,30 @@ def logout():
     flash('You are now logged out', 'success')
     return redirect(url_for('login'))
 
+# contact page
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    form = ContactForm(request.form)
+    if request.method == 'POST' and form.validate():
+        pass
+    return render_template('contact.html', form=form)
+
+
+# def register():
+#     form = RegisterForm(request.form)
+#     if request.method == 'POST' and form.validate():
+#         new_user = Users(first=form.first.data,
+#                          last=form.last.data,
+#                          email=form.email.data,
+#                          username=form.username.data,
+#                          city=form.city.data,
+#                          password=sha256_crypt.encrypt(str(form.password.data)))
+#         db.session.add(new_user)
+#         db.session.commit()
+#         flash('Welcome to flippin!\nYour account has been successfully created.', 'success')
+#         return redirect(url_for('index'))
+#
+#     return render_template('register.html', form=form)
 
 if __name__ == '__main__':
     app.run()

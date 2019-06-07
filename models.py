@@ -22,6 +22,16 @@ class Users(db.Model):
     register_date = db.Column(db.TIMESTAMP, nullable=False)
 
 
+class Listings(db.Model):
+    __table_args__ = {'extend_existing': True}
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    price = db.Column(db.Integer)
+    url = db.Column(db.String(200))
+    scan_date = db.Column(db.TIMESTAMP)
+    city = db.Column(db.Integer(), db.ForeignKey("cities.id"))
+
+
 # creates all model tables if run
 if __name__ == "__main__":
     db.create_all()
