@@ -1,6 +1,11 @@
 class BaseConfig(object):
     DEBUG = False
     SECRET_KEY = 'yYrdj_1iAuCJBZo1lzK26Q'
+    MAIL_SERVER = "smtp.zoho.com"
+    MAIL_PORT = 465
+    MAIL_USE_SSL = True
+    MAIL_USERNAME = 'support@flippinapp.com'
+    MAIL_PASSWORD = 'aquaQUEEF8008'
 
 
 class LocalConfig(BaseConfig):

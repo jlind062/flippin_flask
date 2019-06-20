@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Message, Mail
 from passlib.hash import sha256_crypt
 from functools import wraps
 
@@ -7,8 +8,13 @@ from functools import wraps
 app = Flask(__name__)
 app.config.from_object('config.LocalConfig')
 db = SQLAlchemy(app)
+
+# init mail client
+mail = Mail()
+mail.init_app(app)
+
 # have to import since models relies on db object
-from models import Cities, Users
+from models import Cities, Users, Listings
 from forms import RegisterForm, ContactForm
                     
 
@@ -80,7 +86,8 @@ def login():
 @app.route('/items')
 @is_logged_in
 def items():
-    return render_template('items.html')
+    listings = Listings.query.filter_by(city=session['city']).all()
+    return render_template('items.html', items=listings, length=len(listings))
 
 # logout method, clear session variables and redirect
 @app.route('/logout')
@@ -93,8 +100,19 @@ def logout():
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     form = ContactForm(request.form)
+    # on submit send email with form contents to and from support email
     if request.method == 'POST' and form.validate():
-        pass
+        # don't need to specify sender, default is in app config
+        msg = Message(form.subject.data, sender="support@flippinapp.com",
+                      recipients=["support@flippinapp.com"])
+        msg.body = """
+        From: %s <%s>
+        About: %s
+        
+        %s
+        """ % (form.name.data, form.email.data, form.subject.data, form.message.data)
+        mail.send(msg)
+        flash('Thanks for reaching out! We will get back to you shortly.', 'success')
     return render_template('contact.html', form=form)
 
 
