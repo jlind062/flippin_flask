@@ -116,21 +116,5 @@ def contact():
     return render_template('contact.html', form=form)
 
 
-# def register():
-#     form = RegisterForm(request.form)
-#     if request.method == 'POST' and form.validate():
-#         new_user = Users(first=form.first.data,
-#                          last=form.last.data,
-#                          email=form.email.data,
-#                          username=form.username.data,
-#                          city=form.city.data,
-#                          password=sha256_crypt.encrypt(str(form.password.data)))
-#         db.session.add(new_user)
-#         db.session.commit()
-#         flash('Welcome to flippin!\nYour account has been successfully created.', 'success')
-#         return redirect(url_for('index'))
-#
-#     return render_template('register.html', form=form)
-
 if __name__ == '__main__':
     app.run()

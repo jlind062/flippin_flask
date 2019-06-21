@@ -35,28 +35,25 @@ def main(items, web):
         print(items[0].keys())
     conn_items.close()
 
-    # id = db.Column(db.Integer, primary_key=True)
-    # name = db.Column(db.String(100))
-    # price = db.column(db.Integer)
-    # url = db.column(db.String(200))
-    # scan_date = db.Column(db.TIMESTAMP)
-    # city = db.Column(db.Integer(), db.ForeignKey("cities.id"))
-    # ['name', 'clean_name', 'price', 'address', 'date', 'category_code', 'category', 'city_code', 'city', 'description',
-    #  'comment', 'uploader', 'duplicate', 'profitable', 'last_updated', 'active']
-
     with conn_web.cursor() as cursor:
         for item in items:
-            query = "INSERT INTO " + settings[web]["save_table"] + " (name, price, url, scan_date, city) " \
+            query = "INSERT INTO " + settings[web]["save_table"] + " (name, price, url, scan_date, city, source) " \
                     "VALUES (%s, %s, %s, %s, %s)"
             name = item['name']
             price = str(item['price'])
             url = item['address']
             scan_date = item['date'].strftime('%Y-%m-%d %H:%M:%S')
             city = '2'
-            print(query, (name, price, url, scan_date, city))
-            cursor.execute(query, (name, price, url, scan_date, city))
+            source = 'Kijiji'
+
+            cursor.execute(query, (name, price, url, scan_date, city, source))
     conn_web.commit()
     conn_web.close()
+
+
+def get_source(url):
+    #https://www.kijiji.ca/v-computer-components/city-of-toronto/xpg-spectrix-d41-ddr4-rgb-16gb-8gbx2-228-pin-ram/1442217377
+    return
 
 
 if __name__ == "__main__":

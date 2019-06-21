@@ -30,6 +30,7 @@ class Listings(db.Model):
     url = db.Column(db.String(200))
     scan_date = db.Column(db.TIMESTAMP)
     city = db.Column(db.Integer(), db.ForeignKey("cities.id"))
+    source = db.Column(db.String(50))
 
 
 # creates all model tables if run
