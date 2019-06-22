@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <script type='text/javascript' src="https://unpkg.com/bootstrap-show-password@1.2.1/dist/bootstrap-show-password.min.js"></script>
+    <script type='text/javascript' src="static/bootstrap-maxlength.js"></script>
+    <script type='text/javascript'>
+    $(document).ready(function() {
+        $('.ml').maxlength({
+            alwaysShow: true
+        });
+    });
+    </script>
+    {% from "includes/_formhelpers.html" import render_field %}
+    <div class="jumbotron">
+        <div class="text-center">
+            <h1>Welcome {{ user.first }} {{ user.last }}</h1>
+            <p class="lead">Username: {{ user.username }}</p>
+            <p class="lead">IP: {{ user.ip }}</p>
+        </div>
+        <p class="lead">Make changes to your profile below or press the big scary button below to delete your account.</p>
+        <div class="text-center">
+            <a class="btn btn-lg btn-primary btn-danger" href="/delete" role="button">Delete Account</a>
+        </div>
+    </div>
+
+    <form method="POST" action="">
+
+        {{ render_field(form.city, class_="form-control") }}
+        {{ render_field(form.email, class_="form-control ml", maxlength=50, value=user.email) }}
+        {{ render_field(form.password, class_="form-control", data_toggle="password") }}
+        {{ render_field(form.confirm, class_="form-control") }}
+
+        <div>
+          <button type="submit" class="btn btn-primary btn-block mb-lg-3">Update Profile</button><br><br>
+        </div>
+
+    </form>
+{% endblock %}

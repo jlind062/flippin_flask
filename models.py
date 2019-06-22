@@ -19,6 +19,7 @@ class Users(db.Model):
     username = db.Column(db.String(50))
     city = db.Column(db.Integer(), db.ForeignKey("cities.id"))
     password = db.Column(db.String(100))
+    ip = db.Column(db.String(30))
     register_date = db.Column(db.TIMESTAMP, nullable=False)
 
 
@@ -27,6 +28,8 @@ class Listings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     price = db.Column(db.Integer)
+    profitability = db.Column(db.Float)
+    resell_price = db.Column(db.Float)
     url = db.Column(db.String(200))
     scan_date = db.Column(db.TIMESTAMP)
     city = db.Column(db.Integer(), db.ForeignKey("cities.id"))

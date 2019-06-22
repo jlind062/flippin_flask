@@ -1,15 +1,24 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+    <script type='text/javascript' src="static/bootstrap-maxlength.js"></script>
+    <script type='text/javascript'>
+    $(document).ready(function() {
+        $('.form-control').maxlength({
+            alwaysShow: true
+        });
+    });
+    </script>
     <div><h1>Contact</h1><hr><br></div>
+    {{ form.message.max }}
     {% from "includes/_formhelpers.html" import render_field %}
     <form method="POST" action="">
-        {{ render_field(form.name, class_="form-control") }}
-        {{ render_field(form.email, class_="form-control") }}
-        {{ render_field(form.subject, class_="form-control") }}
-        {{ render_field(form.message, class_="form-control") }}
+        {{ render_field(form.name, class_="form-control", maxlength=50) }}
+        {{ render_field(form.email, class_="form-control", maxlength=50) }}
+        {{ render_field(form.subject, class_="form-control", maxlength=50) }}
+        {{ render_field(form.message, class_="form-control", maxlength=2000) }}
 
-        <div>
+        <div><br>
           <button type="submit" class="btn btn-primary btn-block mb-lg-3">Submit</button><br><br>
         </div>
 

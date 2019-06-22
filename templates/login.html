@@ -1,6 +1,9 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+    <script src="https://unpkg.com/bootstrap-show-password@1.2.1/dist/bootstrap-show-password.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+
     <div><h1>Login</h1></div><hr>
     <form action="" method="POST">
     <div class="form-group">
@@ -9,7 +12,7 @@
     </div>
     <div class="form-group">
         <label>Password</label>
-        <input type="password" name="password" class="form-control" value={{request.form.password}}>
+        <input type="password" name="password" data-toggle="password" class="form-control" value={{request.form.password}}>
     </div><br>
     <div><button type="submit" class="btn btn-primary btn-block mb-lg-3">Submit</button><br><br></div>
     </form>

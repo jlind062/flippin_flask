@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Message, Mail
 from passlib.hash import sha256_crypt
 from functools import wraps
+import requests
 
 # create the flask app from config file and instantiate db
 app = Flask(__name__)
@@ -15,7 +16,7 @@ mail.init_app(app)
 
 # have to import since models relies on db object
 from models import Cities, Users, Listings
-from forms import RegisterForm, ContactForm
+from forms import RegisterForm, ContactForm, ProfileForm
                     
 
 # custom decorator to verify user is logged in
@@ -34,15 +35,23 @@ def is_logged_in(f):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm(request.form)
+    # use passwordrandom.com to get user ip and recommend password
+    recommendation = requests.get('https://www.passwordrandom.com/query?command=password')\
+        .content.decode("utf-8")
+    ip = requests.get('https://www.passwordrandom.com/query?command=ip').\
+        content.decode("utf-8")
+    flash("We recommend using password: '%s'" % recommendation, 'warning')
     if request.method == 'POST' and form.validate():
         new_user = Users(first=form.first.data,
                          last=form.last.data,
                          email=form.email.data,
                          username=form.username.data,
                          city=form.city.data,
-                         password=sha256_crypt.encrypt(str(form.password.data)))
+                         password=sha256_crypt.encrypt(str(form.password.data)),
+                         ip=ip)
         db.session.add(new_user)
         db.session.commit()
+        session.pop('_flashes', None)
         flash('Welcome to flippin!\nYour account has been successfully created.', 'success')
         return redirect(url_for('index'))
 
@@ -88,6 +97,33 @@ def login():
 def items():
     listings = Listings.query.filter_by(city=session['city']).all()
     return render_template('items.html', items=listings, length=len(listings))
+
+
+@app.route('/profile', methods=['GET', 'POST'])
+@is_logged_in
+def profile():
+    form = ProfileForm(request.form)
+    user = Users.query.filter_by(username=session['username']).first()
+    if request.method == 'POST' and form.validate():
+        user.email = form.email.data
+        user.city = form.city.data
+        user.password = sha256_crypt.encrypt(str(form.password.data))
+        session['city'] = form.city.data
+        db.session.commit()
+        flash('Your account settings have been updated.', 'success')
+        return redirect(url_for('profile'))
+
+    return render_template('profile.html', user=user, form=form)
+
+
+@app.route('/delete')
+@is_logged_in
+def delete_user():
+    db.session.query(Users).filter(Users.username == session['username']).delete()
+    db.session.commit()
+    session.clear()
+    flash('Your account has been deleted! Sorry to see you go.', 'success')
+    return render_template('home.html')
 
 # logout method, clear session variables and redirect
 @app.route('/logout')

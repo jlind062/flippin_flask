@@ -1,15 +1,26 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <script type='text/javascript' src="https://unpkg.com/bootstrap-show-password@1.2.1/dist/bootstrap-show-password.min.js"></script>
+    <script type='text/javascript' src="static/bootstrap-maxlength.js"></script>
+    <script type='text/javascript'>
+    $(document).ready(function() {
+        $('.ml').maxlength({
+            alwaysShow: true
+        });
+    });
+    </script>
     <div><h1>Register</h1><hr><br></div>
     {% from "includes/_formhelpers.html" import render_field %}
+
     <form method="POST" action="">
-        {{ render_field(form.username, class_="form-control") }}
+        {{ render_field(form.username, class_="form-control ml", maxlength=25) }}
         {{ render_field(form.city, class_="form-control") }}
-        {{ render_field(form.email, class_="form-control") }}
-        {{ render_field(form.first, class_="form-control") }}
-        {{ render_field(form.last, class_="form-control") }}
-        {{ render_field(form.password, class_="form-control") }}
+        {{ render_field(form.email, class_="form-control ml", maxlength=50) }}
+        {{ render_field(form.first, class_="form-control ml", maxlength=50) }}
+        {{ render_field(form.last, class_="form-control ml", maxlength=50) }}
+        {{ render_field(form.password, class_="form-control", data_toggle="password") }}
         {{ render_field(form.confirm, class_="form-control") }}
 
         <div>
