@@ -7,13 +7,13 @@ import requests
 import time
 
 # create the flask app from config file and instantiate db
-application = app = Flask(__name__)
-app.config.from_object('config.AWSConfig')
-db = SQLAlchemy(app)
+application = Flask(__name__)
+application.config.from_object('config.AWSConfig')
+db = SQLAlchemy(application)
 
 # init mail client
 mail = Mail()
-mail.init_app(app)
+mail.init_app(application)
 
 # have to import since models relies on db object
 from models import Cities, Users, Listings
@@ -33,7 +33,7 @@ def is_logged_in(f):
 
 # register user with form and validating from wtforms
 # if valid notify user and redirect if successful, otherwise display error
-@app.route('/register', methods=['GET', 'POST'])
+@application.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm(request.form)
     # use passwordrandom.com to get user ip and recommend password
@@ -60,12 +60,12 @@ def register():
     return render_template('register.html', form=form)
 
 # homepage
-@app.route('/')
+@application.route('/')
 def index():
     return render_template('home.html')
 
 # login user. does not use wtforms since little validation needs to be done.
-@app.route('/login', methods=['GET', 'POST'])
+@application.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         # get user information and query database for match
@@ -94,14 +94,14 @@ def login():
     return render_template('login.html')
 
 # items page, requires that user is logged in
-@app.route('/items')
+@application.route('/items')
 @is_logged_in
 def items():
     listings = Listings.query.filter_by(city=session['city']).all()
     return render_template('items.html', items=listings, length=len(listings))
 
 
-@app.route('/profile', methods=['GET', 'POST'])
+@application.route('/profile', methods=['GET', 'POST'])
 @is_logged_in
 def profile():
     form = ProfileForm(request.form)
@@ -118,7 +118,7 @@ def profile():
     return render_template('profile.html', user=user, form=form)
 
 
-@app.route('/delete')
+@application.route('/delete')
 @is_logged_in
 def delete_user():
     db.session.query(Users).filter(Users.username == session['username']).delete()
@@ -128,14 +128,14 @@ def delete_user():
     return render_template('home.html')
 
 # logout method, clear session variables and redirect
-@app.route('/logout')
+@application.route('/logout')
 def logout():
     session.clear()
     flash('You are now logged out', 'success')
     return redirect(url_for('login'))
 
 # contact page
-@app.route('/contact', methods=['GET', 'POST'])
+@application.route('/contact', methods=['GET', 'POST'])
 def contact():
     form = ContactForm(request.form)
     # on submit send email with form contents to and from support email
@@ -155,4 +155,4 @@ def contact():
 
 
 if __name__ == '__main__':
-    app.run()
+    application.run()
