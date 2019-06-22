@@ -6,7 +6,7 @@ Website:  flippinapp.com
 **Instructor**: [Ghassem Tofighi](https://ghassem.com/)  
 License: [MIT Licence](https://opensource.org/licenses/MIT)
 
-Video Demo: 
+Video Demo: https://www.youtube.com/watch?v=OVSX_NYoTww
 
 ## Technical Requirements:
 a) A working deployed Flask website on Heroku
