@@ -5,7 +5,7 @@ import json
 # connects to databases from settings file of name items and web
 def connect(items, web):
     with open('settings.json', 'r') as s:
-        data=s.read()
+        data = s.read()
     settings = json.loads(data)
 
     conn_items = pymysql.connect(host=settings[items]["host"],
@@ -25,35 +25,42 @@ def connect(items, web):
 
 
 def main(items, web):
+    # get connections to databases
     settings, conn_items, conn_web = connect(items, web)
 
-    # get items
+    # get items from item database
     with conn_items.cursor() as cursor:
         query = "SELECT * FROM " + settings[items]["save_table"]
         cursor.execute(query)
         items = cursor.fetchall()
-        print(items[0].keys())
     conn_items.close()
 
     with conn_web.cursor() as cursor:
+        # create dict for city names and id's
+        query = "SELECT * FROM " + settings[web]["city_table"]
+        cursor.execute(query)
+        cities = cursor.fetchall()
+        city_lookup = {}
+        for city in cities:
+            city_lookup[city['name']] = city['id']
+
+        # write all items with non-null profit/resell value to web listings database
         for item in items:
-            query = "INSERT INTO " + settings[web]["save_table"] + " (name, price, url, scan_date, city, source) " \
-                    "VALUES (%s, %s, %s, %s, %s)"
-            name = item['name']
+            if item['resell_price'] is None: continue
+            query = "INSERT INTO " + settings[web]["save_table"] + " (name, price, profit, resell_price, url, scan_date, city, source) " \
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            name = item['clean_name']
             price = str(item['price'])
+            resell = str(item['resell_price'])
+            profit = str(item['profit'])
             url = item['address']
             scan_date = item['date'].strftime('%Y-%m-%d %H:%M:%S')
-            city = '2'
-            source = 'Kijiji'
+            city = city_lookup.get(item['city'])
+            source = item['source']
 
-            cursor.execute(query, (name, price, url, scan_date, city, source))
+            cursor.execute(query, (name, price, profit, resell, url, scan_date, city, source))
     conn_web.commit()
     conn_web.close()
-
-
-def get_source(url):
-    #https://www.kijiji.ca/v-computer-components/city-of-toronto/xpg-spectrix-d41-ddr4-rgb-16gb-8gbx2-228-pin-ram/1442217377
-    return
 
 
 if __name__ == "__main__":
