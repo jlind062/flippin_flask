@@ -28,7 +28,7 @@ class Listings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     price = db.Column(db.Integer)
-    profitability = db.Column(db.Float)
+    profit = db.Column(db.Float)
     resell_price = db.Column(db.Float)
     url = db.Column(db.String(200))
     scan_date = db.Column(db.TIMESTAMP)

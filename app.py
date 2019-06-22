@@ -4,10 +4,11 @@ from flask_mail import Message, Mail
 from passlib.hash import sha256_crypt
 from functools import wraps
 import requests
+import time
 
 # create the flask app from config file and instantiate db
-app = Flask(__name__)
-app.config.from_object('config.LocalConfig')
+application = app = Flask(__name__)
+app.config.from_object('config.AWSConfig')
 db = SQLAlchemy(app)
 
 # init mail client
@@ -48,7 +49,8 @@ def register():
                          username=form.username.data,
                          city=form.city.data,
                          password=sha256_crypt.encrypt(str(form.password.data)),
-                         ip=ip)
+                         ip=ip,
+                         register_date=time.strftime('%Y-%m-%d %H:%M:%S'))
         db.session.add(new_user)
         db.session.commit()
         session.pop('_flashes', None)
